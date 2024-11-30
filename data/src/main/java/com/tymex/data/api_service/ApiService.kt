@@ -1,5 +1,6 @@
 package com.tymex.data.api_service
 import com.tymex.data.model.UserInfoDTO
+import com.tymex.data.model.UserInfoDetailDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -16,5 +17,5 @@ interface ApiService {
     @GET("/users/{login_username}")
     suspend fun fetchUserDetail(
         @Path("login_username") userName:String,
-    ): Response<List<UserInfoDTO>>
+    ): Response<UserInfoDetailDTO>
 }

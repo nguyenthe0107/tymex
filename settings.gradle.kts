@@ -23,4 +23,4 @@ rootProject.name = "TymexProject"
 include(":app")
 include(":data")
 include(":domain")
-include(":common")
+include(":di")

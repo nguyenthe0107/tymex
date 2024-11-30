@@ -1,7 +1,5 @@
 package com.example.common.di.module
 import com.example.common.di.qualifier.AppBaseUrl
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -10,40 +8,44 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
     @Provides
+    @Singleton
+    @AppBaseUrl
+    fun provideBaseUrl(): String {
+        return "https://api.github.com/"
+    }
+
+    @Provides
     @AppBaseUrl
     fun provideRetrofit(
-        @AppBaseUrl baseUrl: String,
         okHttpClient: OkHttpClient,
-        factory: GsonConverterFactory
+        factory: MoshiConverterFactory
     ): Retrofit {
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(provideBaseUrl())
             .client(okHttpClient)
             .addConverterFactory(factory)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 
     @Provides
-    fun provideConverterFactory(gson: Gson): GsonConverterFactory {
-        return GsonConverterFactory.create(gson)
+    @Singleton
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
     }
 
     @Provides
-    fun provideGson(): Gson {
-        val gsonBuilder = GsonBuilder()
-        return gsonBuilder.create()
+    @Singleton
+    fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory {
+        return MoshiConverterFactory.create(moshi)
     }
-
 }
