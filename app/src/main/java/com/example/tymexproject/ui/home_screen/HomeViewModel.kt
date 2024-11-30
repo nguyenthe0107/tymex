@@ -1,4 +1,4 @@
-package com.example.tymexproject.home_screen
+package com.example.tymexproject.ui.home_screen
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

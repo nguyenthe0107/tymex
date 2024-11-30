@@ -67,8 +67,14 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+
+    // module
     implementation(project(":domain"))
     implementation(project(":di"))
+    implementation(project(":designsystem"))
+    implementation(project(":data"))
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -115,14 +121,9 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
 
-    // dataStore
-    implementation(libs.androidx.datastore.preferences)
-
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.lottie.compose)
-
-    implementation(project(":data"))
 
 }
 

@@ -1,4 +1,4 @@
-package com.example.tymexproject
+package com.example.tymexproject.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.tymexproject.home_screen.HomeScreen
+import com.example.designsystem.theme.TymexProjectTheme
+import com.example.tymexproject.ui.home_screen.HomeScreen
 import com.example.tymexproject.routes.Screens
-import com.example.tymexproject.ui.theme.TymexProjectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

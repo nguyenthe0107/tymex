@@ -1,4 +1,4 @@
-package com.example.tymexproject.home_screen
+package com.example.tymexproject.ui.home_screen
 
 sealed class HomeEvent {
     data object LoadSurveys: HomeEvent()

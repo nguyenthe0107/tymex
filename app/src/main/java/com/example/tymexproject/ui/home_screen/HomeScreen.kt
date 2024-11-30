@@ -1,4 +1,4 @@
-package com.example.tymexproject.home_screen
+package com.example.tymexproject.ui.home_screen
 
 import android.util.Log
 import android.widget.Toast
