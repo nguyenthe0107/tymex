@@ -6,6 +6,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class UserInfoDTO(
+    @Json(name = "id")
+    val id: Int,
     @Json(name = "login")
     val userName: String,
     @Json(name = "avatar_url")
@@ -15,5 +17,5 @@ data class UserInfoDTO(
 )
 
 fun UserInfoDTO.toUserInfo(): UserInfo {
-    return UserInfo(userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl)
+    return UserInfo(id = this.id,userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl)
 }

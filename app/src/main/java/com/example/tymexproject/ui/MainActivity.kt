@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.designsystem.theme.TymexProjectTheme
 import com.example.tymexproject.ui.home_screen.HomeScreen
 import com.example.tymexproject.routes.Screens
+import com.example.tymexproject.ui.user_detail_screen.UserDetailScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,7 +29,10 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = Screens.HomeScreen.route) {
                         composable(route = Screens.HomeScreen.route) {
-                            HomeScreen()
+                            HomeScreen(navController)
+                        }
+                        composable(route = Screens.UserDetailScreen.route) {
+                            UserDetailScreen(navController)
                         }
                     }
                 }

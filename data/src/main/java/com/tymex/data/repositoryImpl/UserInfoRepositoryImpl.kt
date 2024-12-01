@@ -31,6 +31,7 @@ class UserInfoRepositoryImpl @Inject constructor(
                             }.toList())
                         )
                     }
+
                 }
             }
                 .onFailure {

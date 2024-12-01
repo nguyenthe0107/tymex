@@ -74,6 +74,7 @@ dependencies {
     implementation(project(":di"))
     implementation(project(":designsystem"))
     implementation(project(":data"))
+    implementation(libs.androidx.constraintlayout)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
