@@ -89,18 +89,17 @@ fun UserDetailScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     StatItem(
-                        count = "100+",
+                        count = "${userDetailInfo?.following}+",
                         label = "Follower",
                         icon = Icons.Default.Person
                     )
                     StatItem(
-                        count = "10+",
+                        count = "${userDetailInfo?.followers}+",
                         label = "Following",
                         icon = Icons.Default.Star
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                // Blog section
                 Text(
                     text = "Blog",
                     style = MaterialTheme.typography.titleLarge,
@@ -108,7 +107,7 @@ fun UserDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = userDetailInfo?.htmlUrl ?: "https://blog.abc",
+                    text = userDetailInfo?.htmlUrl ?: "",
                     style = MaterialTheme.typography.bodyLarge,
                     color = Color.Black
                 )

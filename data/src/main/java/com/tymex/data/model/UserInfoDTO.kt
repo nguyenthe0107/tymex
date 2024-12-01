@@ -21,5 +21,10 @@ data class UserInfoDTO(
 )
 
 fun UserInfoDTO.toUserInfo(): UserInfoResponse {
-    return UserInfoResponse(id = this.id,userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl)
+    return UserInfoResponse(
+        id = this.id, userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl,
+        location = this.location,
+        followers = this.followers,
+        following = this.following
+    )
 }
