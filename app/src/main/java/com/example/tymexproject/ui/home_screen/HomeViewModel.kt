@@ -35,21 +35,21 @@ class HomeViewModel @Inject constructor(
             _state.value = state.value.copy(isLoading = true)
             _state.value = state.value.copy(userList = getMockUsers())
             _state.value = state.value.copy(isLoading = false)
-//            userInfoUseCase.fetchUserList(1, 10)
-//                .collect { result ->
-//                    when(result){
-//                        is ResultApi.Success -> {
-//                            _state.value = state.value.copy(userList = result.data)
-//                            _state.value = state.value.copy(isLoading = false)
-//                        }
-//                        is ResultApi.Error -> {
-//                            _state.value = state.value.copy(isLoading = false)
-//                        }
-//                        is ResultApi.Loading -> {
-//                            _state.value = state.value.copy(isLoading = true)
-//                        }
-//                    }
-//                }
+            userInfoUseCase.fetchUserList(1, 10)
+                .collect { result ->
+                    when(result){
+                        is ResultApi.Success -> {
+                            _state.value = state.value.copy(userList = result.data)
+                            _state.value = state.value.copy(isLoading = false)
+                        }
+                        is ResultApi.Error -> {
+                            _state.value = state.value.copy(isLoading = false)
+                        }
+                        is ResultApi.Loading -> {
+                            _state.value = state.value.copy(isLoading = true)
+                        }
+                    }
+                }
         }
     }
 

@@ -1,4 +1,5 @@
 package com.example.common.di.module
+import com.example.common.di.interceptor.AuthInterceptor
 import com.example.common.di.qualifier.AppBaseUrl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
