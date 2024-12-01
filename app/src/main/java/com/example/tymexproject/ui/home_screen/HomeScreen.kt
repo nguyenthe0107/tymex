@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.model.UserInfo
+import com.example.domain.model.UserInfoResponse
 import com.example.tymexproject.common_components.LoadingComponent
 import com.example.tymexproject.routes.Screens
 import com.example.tymexproject.ui.components.UserInfoCard
@@ -49,7 +49,7 @@ fun HomeScreen(
             }
         }
     }
-    val userList: List<UserInfo> = homeViewModel.state.value.userList
+    val userList: List<UserInfoResponse> = homeViewModel.state.value.userList
     val shouldShowLoading = homeViewModel.state.value.isLoading
     Scaffold(
         topBar = {
@@ -74,7 +74,7 @@ fun HomeScreen(
             ) {
                 items(userList, key = { it.id }) { userInfo ->
                     UserInfoCard(user = userInfo, onClick = {
-                        navController.navigate(Screens.UserDetailScreen.route)
+                        navController.navigate(Screens.UserDetailScreen.route.replace("{user_name}", userInfo.userName))
                     })
                 }
             }

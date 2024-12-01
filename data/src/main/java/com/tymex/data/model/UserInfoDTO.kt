@@ -1,6 +1,6 @@
 package com.tymex.data.model
 
-import com.example.domain.model.UserInfo
+import com.example.domain.model.UserInfoResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -14,8 +14,12 @@ data class UserInfoDTO(
     val avatarUrl: String,
     @Json(name = "html_url")
     val htmlUrl: String,
+
+    val location: String?,
+    val followers: Int?,
+    val following: Int?,
 )
 
-fun UserInfoDTO.toUserInfo(): UserInfo {
-    return UserInfo(id = this.id,userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl)
+fun UserInfoDTO.toUserInfo(): UserInfoResponse {
+    return UserInfoResponse(id = this.id,userName = this.userName, avatarUrl = this.avatarUrl, htmlUrl = this.htmlUrl)
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.model.UserInfo
+import com.example.domain.model.UserInfoResponse
 import com.example.tymexproject.common_components.LoadingComponent
 import com.example.tymexproject.ui.components.UserInfoCard
 import com.example.tymexproject.ui.user_detail_screen.components.StatItem
@@ -41,11 +41,12 @@ import com.example.tymexproject.ui.user_detail_screen.components.StatItem
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UserDetailScreen(
+    userName:String?,
     navController: NavController,
     userDetailViewModel: UserDetailViewModel = hiltViewModel()) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        userDetailViewModel.getUserDetailByUserName()
+        userDetailViewModel.getUserDetailByUserName(userName)
     }
     LaunchedEffect(key1 = true) {
         userDetailViewModel.eventFlow.collect { event ->
@@ -56,7 +57,7 @@ fun UserDetailScreen(
             }
         }
     }
-    val userDetailInfo: UserInfo? = userDetailViewModel.state.value.userDetail
+    val userDetailInfo: UserInfoResponse? = userDetailViewModel.state.value.userDetail
     val shouldShowLoading = userDetailViewModel.state.value.isLoading
     Scaffold(
         topBar = {

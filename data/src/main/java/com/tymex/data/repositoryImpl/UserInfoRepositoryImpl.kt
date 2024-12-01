@@ -1,11 +1,9 @@
 package com.tymex.data.repositoryImpl
 
-import com.example.domain.model.UserDetailInfo
-import com.example.domain.model.UserInfo
+import com.example.domain.model.UserInfoResponse
 import com.example.domain.repository.UserInfoRepository
 import com.example.domain.utils.ResultApi
 import com.tymex.data.api_service.ApiService
-import com.tymex.data.model.toUserDetailInfo
 import com.tymex.data.model.toUserInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,7 +13,7 @@ class UserInfoRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : UserInfoRepository {
 
-    override suspend fun fetchUserList(perPage: Int, since: Int): Flow<ResultApi<List<UserInfo>>> {
+    override suspend fun fetchUserList(perPage: Int, since: Int): Flow<ResultApi<List<UserInfoResponse>>> {
         return flow {
             kotlin.runCatching {
                 apiService.fetchUserList(
@@ -39,7 +37,7 @@ class UserInfoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchUserDetail(userName: String): Flow<ResultApi<UserDetailInfo>> {
+    override suspend fun fetchUserDetail(userName: String): Flow<ResultApi<UserInfoResponse>> {
         return flow {
             kotlin.runCatching {
                 apiService.fetchUserDetail(userName)
@@ -47,7 +45,7 @@ class UserInfoRepositoryImpl @Inject constructor(
                 if (it.isSuccessful) {
                     it.body()?.let { response ->
                         emit(
-                            ResultApi.Success(response.toUserDetailInfo())
+                            ResultApi.Success(response.toUserInfo())
                         )
                     }
                 }
