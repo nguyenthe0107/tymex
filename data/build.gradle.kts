@@ -43,6 +43,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.core.v531)
+    testImplementation(libs.mockito.kotlin.v510)
+    testImplementation(libs.kotlinx.coroutines.test.v171)
+    testImplementation(libs.turbine.v100)
+    testImplementation(libs.mockk.v1135)
+
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.okhttp)

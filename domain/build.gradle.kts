@@ -43,6 +43,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk.v11313)
+    testImplementation(libs.kotlinx.coroutines.test.v190)
+    testImplementation(libs.turbine.v100)
+
     //Dagger - Hilt
     implementation(libs.hilt.android.v2511)
     kapt(libs.hilt.android.compiler.v2511)
