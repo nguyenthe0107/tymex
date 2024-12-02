@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.datastore.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,6 +60,9 @@ dependencies {
     //Dagger - Hilt
     implementation(libs.hilt.android.v2511)
     kapt(libs.hilt.android.compiler.v2511)
+
+    // dataStore
+    implementation(libs.androidx.datastore.preferences)
 }
 
 // Allow references to generated code

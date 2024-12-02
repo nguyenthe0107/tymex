@@ -1,4 +1,5 @@
 package com.tymex.data.di
+import com.tymex.data.repositoryImpl.UserPreferencesManager
 import com.example.domain.repository.UserInfoRepository
 import com.tymex.data.api_service.ApiService
 import com.tymex.data.repositoryImpl.UserInfoRepositoryImpl
@@ -11,9 +12,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
+
     @Provides
     @Singleton
-    fun provideUserInfoRepository(apiService: ApiService): UserInfoRepository {
-        return UserInfoRepositoryImpl(apiService)
+    fun provideUserInfoRepository(apiService: ApiService,
+                                  userPreferencesManager: UserPreferencesManager
+    ): UserInfoRepository {
+        return UserInfoRepositoryImpl(apiService,userPreferencesManager)
     }
 }

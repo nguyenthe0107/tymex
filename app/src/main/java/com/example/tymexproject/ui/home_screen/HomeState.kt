@@ -5,4 +5,7 @@ import com.example.domain.model.UserInfoResponse
 data class HomeState(
     val userList: List<UserInfoResponse> = emptyList(),
     val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val currentPage: Int = 0,
+    val canLoadMore: Boolean = true
 )

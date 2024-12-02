@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.di.module.DispatcherProvider
-import com.example.domain.model.UserInfoResponse
 import com.example.domain.usecase.UserInfoUseCase
 import com.example.domain.utils.ResultApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,62 +26,58 @@ class HomeViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        getUserList()
+        getUserList(isLoadMore = false)
     }
 
-    fun getUserList() {
+    fun getUserList(isLoadMore: Boolean = false) {
+        if (!isLoadMore && state.value.isLoading) return
+        if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)) return
+
         viewModelScope.launch(dispatcherProvider.io) {
-            _state.value = state.value.copy(isLoading = true)
-            userInfoUseCase.fetchUserList(10, 1)
+            if (isLoadMore) {
+                _state.value = state.value.copy(isLoadingMore = true)
+            } else {
+                _state.value = state.value.copy(isLoading = true)
+            }
+
+            val since = if (isLoadMore) {
+                state.value.userList.lastOrNull()?.id ?: 0
+            } else {
+                0
+            }
+            userInfoUseCase.fetchUserList(perPage = 20, since = since)
                 .collect { result ->
-                    when(result){
+                    when(result) {
                         is ResultApi.Success -> {
-                            _state.value = state.value.copy(userList = result.data)
-                            _state.value = state.value.copy(isLoading = false)
+                            val newList = if (isLoadMore) {
+                                state.value.userList + result.data
+                            } else {
+                                result.data
+                            }
+                            _state.value = state.value.copy(
+                                userList = newList,
+                                isLoading = false,
+                                isLoadingMore = false,
+                                currentPage = state.value.currentPage + 1,
+                                canLoadMore = result.data.isNotEmpty()
+                            )
                         }
                         is ResultApi.Error -> {
-                            _state.value = state.value.copy(isLoading = false)
+                            _state.value = state.value.copy(
+                                isLoading = false,
+                                isLoadingMore = false
+                            )
+                            _eventFlow.emit(UiHomeEvent.ShowError(
+                                result.message
+                            ))
                         }
                         is ResultApi.Loading -> {
-                            _state.value = state.value.copy(isLoading = true)
+                            _state.value = state.value.copy(
+                                isLoading = true,
+                            )
                         }
                     }
                 }
         }
-    }
-
-    private fun getMockUsers(): List<UserInfoResponse> {
-        return listOf(
-            UserInfoResponse(
-                userName = "johndoe",
-                id = 1,
-                avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
-                htmlUrl = "https://github.com/johndoe",
-            ),
-            UserInfoResponse(
-                userName = "janedoe",
-                id = 2,
-                avatarUrl = "https://avatars.githubusercontent.com/u/2?v=4",
-                htmlUrl = "https://github.com/janedoe",
-            ),
-            UserInfoResponse(
-                userName = "bobsmith",
-                id = 3,
-                avatarUrl = "https://avatars.githubusercontent.com/u/3?v=4",
-                htmlUrl = "https://github.com/bobsmith",
-            ),
-            UserInfoResponse(
-                userName = "alicejones",
-                id = 4,
-                avatarUrl = "https://avatars.githubusercontent.com/u/4?v=4",
-                htmlUrl = "https://github.com/alicejones",
-            ),
-            UserInfoResponse(
-                userName = "mikebrown",
-                id = 5,
-                avatarUrl = "https://avatars.githubusercontent.com/u/5?v=4",
-                htmlUrl = "https://github.com/mikebrown",
-            )
-        )
     }
 }

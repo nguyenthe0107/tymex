@@ -39,6 +39,7 @@ composeFoundation = "1.5.1"
 uiGraphicsAndroid = "1.7.5"
 material3Android = "1.3.1"
 constraintlayout = "2.0.1"
+datastoreCoreAndroid = "1.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -92,6 +93,7 @@ androidx-compose-ui = { group = "androidx.compose.ui", name = "ui"}
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.di.module.DispatcherProvider
-import com.example.domain.model.UserInfoResponse
 import com.example.domain.usecase.UserInfoUseCase
 import com.example.domain.utils.ResultApi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,14 +48,5 @@ class UserDetailViewModel @Inject constructor(
                     }
             }
         }
-    }
-
-    private fun getMockUsers(): UserInfoResponse {
-        return UserInfoResponse(
-            userName = "johndoe",
-            id = 1,
-            avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
-            htmlUrl = "https://github.com/johndoe",
-        )
     }
 }

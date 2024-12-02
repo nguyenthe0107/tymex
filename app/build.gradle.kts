@@ -68,7 +68,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-
     // module
     implementation(project(":domain"))
     implementation(project(":di"))
