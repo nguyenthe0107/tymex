@@ -19,6 +19,11 @@ class HomeViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
+    companion object {
+        const val TAG = "HomeViewModel"
+        const val PER_PAGE = 20
+    }
+
     private val _state = mutableStateOf(HomeState())
     val state: State<HomeState> = _state
 
@@ -32,20 +37,18 @@ class HomeViewModel @Inject constructor(
     fun getUserList(isLoadMore: Boolean = false) {
         if (!isLoadMore && state.value.isLoading) return
         if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)) return
-
         viewModelScope.launch(dispatcherProvider.io) {
             if (isLoadMore) {
                 _state.value = state.value.copy(isLoadingMore = true)
             } else {
                 _state.value = state.value.copy(isLoading = true)
             }
-
             val since = if (isLoadMore) {
                 state.value.userList.lastOrNull()?.id ?: 0
             } else {
                 0
             }
-            userInfoUseCase.fetchUserList(perPage = 20, since = since)
+            userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = since)
                 .collect { result ->
                     when(result) {
                         is ResultApi.Success -> {

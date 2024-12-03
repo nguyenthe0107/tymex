@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TymexProject</string>
+    <string name="tvFollower">Follower</string>
+    <string name="tvFollowing">Following</string>
+    <string name="tvBlog">Blog</string>
+    <string name="tvTitleHome">Github Users</string>
+    <string name="tvTitleDetails">User Details</string>
 </resources>

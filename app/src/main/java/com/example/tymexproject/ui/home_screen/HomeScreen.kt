@@ -25,9 +25,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.designsystem.component.ScaffoldTopAppbar
+import com.example.tymexproject.R
 import com.example.tymexproject.common_components.LoadingComponent
 import com.example.tymexproject.routes.Screens
 import com.example.tymexproject.ui.components.UserInfoCard
@@ -51,17 +54,8 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Github Users") },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
+    ScaffoldTopAppbar(
+        title = stringResource(R.string.tvTitleHome),
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(

@@ -13,37 +13,34 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.designsystem.component.ScaffoldTopAppbar
 import com.example.domain.model.UserInfoResponse
+import com.example.tymexproject.R
 import com.example.tymexproject.common_components.LoadingComponent
 import com.example.tymexproject.ui.components.UserInfoCard
 import com.example.tymexproject.ui.user_detail_screen.components.StatItem
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UserDetailScreen(
-    userName:String?,
+    userName: String?,
     navController: NavController,
-    userDetailViewModel: UserDetailViewModel = hiltViewModel()) {
+    userDetailViewModel: UserDetailViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         userDetailViewModel.getUserDetailByUserName(userName)
@@ -59,19 +56,11 @@ fun UserDetailScreen(
     }
     val userDetailInfo: UserInfoResponse? = userDetailViewModel.state.value.userDetail
     val shouldShowLoading = userDetailViewModel.state.value.isLoading
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("User Details") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
+    ScaffoldTopAppbar(
+        title = stringResource(R.string.tvTitleDetails),
+        onNavigationIconClick = {
+            navController.popBackStack()
+        }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -89,19 +78,19 @@ fun UserDetailScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     StatItem(
-                        count = "${userDetailInfo?.following}+",
-                        label = "Follower",
+                        count = "${userDetailInfo?.followers}+",
+                        label = stringResource(id = R.string.tvFollower),
                         icon = Icons.Default.Person
                     )
                     StatItem(
-                        count = "${userDetailInfo?.followers}+",
-                        label = "Following",
+                        count = "${userDetailInfo?.following}+",
+                        label = stringResource(id = R.string.tvFollowing),
                         icon = Icons.Default.Star
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "Blog",
+                    text = stringResource(id = R.string.tvBlog),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Medium
                 )

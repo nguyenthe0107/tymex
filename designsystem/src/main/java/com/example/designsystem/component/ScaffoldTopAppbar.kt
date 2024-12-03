@@ -2,6 +2,7 @@ package com.example.designsystem.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,13 +26,13 @@ import com.example.designsystem.theme.color
 fun ScaffoldTopAppbar(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
-    title:String,
-    onNavigationIconClick:()->Unit,
+    title: String,
+    onNavigationIconClick: () -> Unit,
     navigationIcon: Painter = rememberVectorPainter(image = Icons.Outlined.ArrowBack),
     snackbarHost: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
-){
+) {
     Scaffold(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -50,10 +51,7 @@ fun ScaffoldTopAppbar(
                     ),
                     navigationIcon = {
                         IconButton(onClick = onNavigationIconClick) {
-                            Icon(
-                                painter = navigationIcon,
-                                contentDescription = "navigationIcon"
-                            )
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                         }
                     },
                 )
@@ -69,12 +67,11 @@ fun ScaffoldTopAppbar(
 fun ScaffoldTopAppbar(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
-    title:String,
+    title: String,
     snackBarHost: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
-
-    ){
+) {
     Scaffold(
         snackbarHost = snackBarHost,
         containerColor = containerColor,

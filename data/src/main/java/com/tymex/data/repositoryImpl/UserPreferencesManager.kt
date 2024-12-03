@@ -54,7 +54,6 @@ class UserPreferencesManager @Inject constructor(
             .map { preferences ->
                 val lastCachedTime = preferences[LAST_CACHED_TIME] ?: 0
                 val currentTime = System.currentTimeMillis()
-
                 // Cache expires after 30 minutes
                 if (currentTime - lastCachedTime > 30 * 60 * 1000) {
                     null
@@ -64,20 +63,6 @@ class UserPreferencesManager @Inject constructor(
                         gson.fromJson(json, type)
                     }
                 }
-            }
-    }
-
-    fun getLastSinceId(): Flow<Int> {
-        return dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[LAST_SINCE_ID] ?: 0
             }
     }
 
