@@ -1,30 +1,28 @@
 package com.tymex.data.repositoryImpl
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
-import com.example.domain.model.UserInfoResponse
+import app.cash.turbine.test
 import com.example.domain.utils.ResultApi
 import com.tymex.data.api_service.ApiService
 import com.tymex.data.model.UserInfoDTO
 import com.tymex.data.model.toUserInfo
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.just
 import kotlinx.coroutines.flow.flowOf
-import okhttp3.ResponseBody
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
+import kotlinx.coroutines.test.runTest
 import retrofit2.Response
 import java.io.IOException
+import org.junit.Before
+import org.junit.Test
+import com.google.common.truth.Truth.assertThat
+import com.tymex.data.repositoryImpl.Constants.EMPTY_DATA
+import io.mockk.MockKAnnotations
+import io.mockk.MockKException
+import io.mockk.mockk
 
 class UserInfoRepositoryImplTest {
 
-    @Mock
-    private lateinit var apiService: ApiService
-
-    @Mock
-    private lateinit var userPreferencesManager: UserPreferencesManager
+    private val apiService: ApiService = mockk()
+    private val userPreferencesManager: UserPreferencesManager = mockk()
 
     private lateinit var repository: UserInfoRepositoryImpl
 
@@ -38,154 +36,132 @@ class UserInfoRepositoryImplTest {
         followers = 100,
         following = 50,
     )
-
     private val mockUserList = listOf(mockUserDto)
+
+    companion object{
+        const val PER_PAGE = 20
+        const val PAGE = 1
+    }
 
     @Before
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
+        MockKAnnotations.init(this, relaxed = true)
         repository = UserInfoRepositoryImpl(apiService, userPreferencesManager)
     }
 
-    // Tests for fetchUserList
     @Test
-    fun `fetchUserList returns Success when API call is successful`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserList(10, 0)).thenReturn(Response.success(mockUserList))
-
-        // Act
-        val result = repository.fetchUserList(10, 0).first()
-
-        // Assert
-        assertTrue(result is ResultApi.Success)
-        assertEquals(mockUserList.map { it.toUserInfo() }, (result as ResultApi.Success).data)
-        verify(userPreferencesManager).saveUserList(mockUserList)
+    fun `fetchUserList should emit Success when API call is successful`() = runTest {
+        coEvery { apiService.fetchUserList(any(), any()) } returns Response.success(mockUserList)
+        coEvery { userPreferencesManager.saveUserList(any()) } just Runs
+        try {
+            repository.fetchUserList(PER_PAGE, PAGE).test {
+                assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+                val result = awaitItem() as ResultApi.Success
+                assertThat(result.data).isEqualTo(mockUserList.map { it.toUserInfo() })
+                awaitComplete()
+            }
+        } catch (e: MockKException) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     @Test
-    fun `fetchUserList returns Error when API returns empty list`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserList(10, 0)).thenReturn(Response.success(emptyList()))
-
-        // Act
-        val result = repository.fetchUserList(10, 0).first()
-
-        // Assert
-        assertTrue(result is ResultApi.Error)
-        assertEquals("Empty response body", (result as ResultApi.Error).message)
+    fun `fetchUserList returns Error when API returns empty list`() = runTest {
+        coEvery { apiService.fetchUserList(PER_PAGE, PAGE) } returns Response.success(emptyList())
+        repository.fetchUserList(PER_PAGE, PAGE).test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Error
+            assertThat(result.message).isEqualTo(EMPTY_DATA)
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserList returns cached data when API call fails`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserList(10, 0)).thenThrow(IOException("Network error"))
-        `when`(userPreferencesManager.getUserList()).thenReturn(flowOf(mockUserList))
-
-        // Act
-        val result = repository.fetchUserList(10, 0).first()
-
-        // Assert
-        assertTrue(result is ResultApi.Success)
-        assertEquals(mockUserList.map { it.toUserInfo() }, (result as ResultApi.Success).data)
+    fun `fetchUserList returns cached data when API call fails`() = runTest {
+        coEvery { apiService.fetchUserList(PER_PAGE, PAGE) } throws IOException("Network error")
+        coEvery { userPreferencesManager.getUserList() } returns flowOf(mockUserList)
+        repository.fetchUserList(PER_PAGE, PAGE).test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Success
+            assertThat(result.data).isEqualTo(mockUserList.map { it.toUserInfo() })
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserList returns Error when API fails and no cache available`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserList(10, 0)).thenThrow(IOException("Network error"))
-        `when`(userPreferencesManager.getUserList()).thenReturn(flowOf(null))
-
-        // Act
-        val result = repository.fetchUserList(10, 0).first()
-
-        // Assert
-        assertTrue(result is ResultApi.Error)
-        assertEquals("Unexpected error occurred", (result as ResultApi.Error).message)
+    fun `fetchUserList returns Error when API fails and no cache available`() = runTest {
+        coEvery { apiService.fetchUserList(PER_PAGE, PAGE) } throws IOException("Network error")
+        coEvery { userPreferencesManager.getUserList() } returns flowOf(emptyList())
+        repository.fetchUserList(PER_PAGE, PAGE).test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Error
+            assertThat(result.message).isEqualTo(Constants.ERR_COMMON)
+            assertThat(result.code).isEqualTo(-1)
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserList emits Loading state before making API call`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserList(10, 0)).thenReturn(Response.success(mockUserList))
-
-        // Act
-        val results = mutableListOf<ResultApi<List<UserInfoResponse>>>()
-        repository.fetchUserList(10, 0).collect { results.add(it) }
-
-        // Assert
-        assertTrue(results[0] is ResultApi.Loading)
-        assertTrue(results[1] is ResultApi.Success)
-    }
-
-    // Tests for fetchUserDetail
-    @Test
-    fun `fetchUserDetail returns Success when API call is successful`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserDetail("testUser")).thenReturn(Response.success(mockUserDto))
-
-        // Act
-        val result = repository.fetchUserDetail("testUser").first()
-
-        // Assert
-        assertTrue(result is ResultApi.Success)
-        assertEquals(mockUserDto.toUserInfo(), (result as ResultApi.Success).data)
+    fun `fetchUserDetail returns Success when API call is successful`() = runTest {
+        coEvery { apiService.fetchUserDetail("testUser") } returns Response.success(mockUserDto)
+        repository.fetchUserDetail("testUser").test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Success
+            assertThat(result.data).isEqualTo(mockUserDto.toUserInfo())
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserDetail returns Error when API returns null`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserDetail("testUser")).thenReturn(Response.success(null))
-
-        // Act
-        val result = repository.fetchUserDetail("testUser").first()
-
-        // Assert
-        assertTrue(result is ResultApi.Error)
-        assertEquals("Empty response body", (result as ResultApi.Error).message)
+    fun `fetchUserDetail returns Error when API returns null`() = runTest {
+        coEvery { apiService.fetchUserDetail("testUser") } returns Response.success(null)
+        repository.fetchUserDetail("testUser").test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Error
+            assertThat(result.message).isEqualTo(EMPTY_DATA)
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserDetail returns Error when API call fails`() = runBlocking {
-        // Arrange
+    fun `fetchUserDetail returns Error when API call fails`() = runTest {
         val errorResponse = Response.error<UserInfoDTO>(
             404,
-            mock(ResponseBody::class.java)
+            mockk(relaxed = true)
         )
-        `when`(apiService.fetchUserDetail("testUser")).thenReturn(errorResponse)
-
-        // Act
-        val result = repository.fetchUserDetail("testUser").first()
-
-        // Assert
-        assertTrue(result is ResultApi.Error)
-        assertEquals(404, (result as ResultApi.Error).code)
+        coEvery { apiService.fetchUserDetail("testUser") } returns errorResponse
+        repository.fetchUserDetail("testUser").test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Error
+            assertThat(result.code).isEqualTo(404)
+            assertThat(result.message).contains(Constants.ERR_COMMON)
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserDetail returns Error when exception occurs`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserDetail("testUser")).thenThrow(IOException("Network error"))
-
-        // Act
-        val result = repository.fetchUserDetail("testUser").first()
-
-        // Assert
-        assertTrue(result is ResultApi.Error)
-        assertEquals(-1, (result as ResultApi.Error).code)
-        assertTrue(result.cause is IOException)
+    fun `fetchUserDetail returns Error when exception occurs`() = runTest {
+        coEvery { apiService.fetchUserDetail("testUser") } throws IOException("Network error")
+        coEvery { userPreferencesManager.getUserList() } returns flowOf(emptyList())
+        repository.fetchUserDetail("testUser").test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Error
+            assertThat(result.code).isEqualTo(-1)
+            assertThat(result.message).contains(Constants.ERR_COMMON)
+            assertThat(result.cause).isInstanceOf(IOException::class.java)
+            awaitComplete()
+        }
     }
 
     @Test
-    fun `fetchUserDetail emits Loading state before making API call`() = runBlocking {
-        // Arrange
-        `when`(apiService.fetchUserDetail("testUser")).thenReturn(Response.success(mockUserDto))
-
-        // Act
-        val results = mutableListOf<ResultApi<UserInfoResponse>>()
-        repository.fetchUserDetail("testUser").collect { results.add(it) }
-
-        // Assert
-        assertTrue(results[0] is ResultApi.Loading)
-        assertTrue(results[1] is ResultApi.Success)
+    fun `fetchUserDetail emits Loading state before making API call`() = runTest {
+        coEvery { apiService.fetchUserDetail("testUser") } returns Response.success(mockUserDto)
+        repository.fetchUserDetail("testUser").test {
+            assertThat(awaitItem()).isInstanceOf(ResultApi.Loading::class.java)
+            val result = awaitItem() as ResultApi.Success
+            assertThat(result.data).isEqualTo(mockUserDto.toUserInfo())
+            awaitComplete()
+        }
     }
 }

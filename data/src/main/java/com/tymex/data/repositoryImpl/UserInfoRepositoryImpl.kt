@@ -5,6 +5,8 @@ import com.example.domain.utils.ResultApi
 import com.tymex.data.api_service.ApiService
 import com.tymex.data.model.UserInfoDTO
 import com.tymex.data.model.toUserInfo
+import com.tymex.data.repositoryImpl.Constants.EMPTY_DATA
+import com.tymex.data.repositoryImpl.Constants.ERR_COMMON
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -29,11 +31,18 @@ class UserInfoRepositoryImpl @Inject constructor(
                 val response = apiService.fetchUserList(perPage, since)
                 if (response.isSuccessful) {
                     val users : List<UserInfoDTO> = response.body() ?: emptyList()
+                    if(users.isEmpty()){
+                        emit(ResultApi.Error(EMPTY_DATA, response.code()))
+                        return@flow
+                    }
                     userPreferencesManager.saveUserList(users)
                     emit(ResultApi.Success(users.map { it.toUserInfo() }))
                 } else {
                     // handle error
-                    emit(ResultApi.Error("API call failed: ${response.message()}", response.code()))
+                    emit(ResultApi.Error(
+                        message = "$ERR_COMMON: ${response.message()}",
+                        code = response.code()
+                    ))
                 }
             } catch (e: Exception) {
                 // handle from cached
@@ -42,7 +51,7 @@ class UserInfoRepositoryImpl @Inject constructor(
                     emit(ResultApi.Success(cachedUsers.map { it.toUserInfo() }))
                 } else {
                     // emit error from exception
-                    emit(ResultApi.Error("Unexpected error occurred", code = -1, cause = e))
+                    emit(ResultApi.Error(ERR_COMMON, code = -1, cause = e))
                 }
             }
         }
@@ -61,17 +70,20 @@ class UserInfoRepositoryImpl @Inject constructor(
                     if (user != null) {
                         emit(ResultApi.Success(user.toUserInfo()))
                     } else {
-                        emit(ResultApi.Error("Empty response body", response.code()))
+                        emit(ResultApi.Error(EMPTY_DATA, response.code()))
                     }
                 } else {
-                    emit(ResultApi.Error("API call failed: ${response.message()}", response.code()))
+                    emit(ResultApi.Error(
+                        message = "$ERR_COMMON: ${response.message()}",
+                        code = response.code()
+                    ))
                 }
             } catch (e: Exception) {
                 val cachedUsers = userPreferencesManager.getUserList().first()
                 if(cachedUsers.isNullOrEmpty()){
                     emit(
                         ResultApi.Error(
-                            "Unexpected error occurred: ${e.message}",
+                            "$ERR_COMMON: ${e.message}",
                             code = -1,
                             cause = e
                         )
@@ -81,13 +93,14 @@ class UserInfoRepositoryImpl @Inject constructor(
                     if(userDetail == null){
                         emit(
                             ResultApi.Error(
-                                "Unexpected error occurred: ${e.message}",
+                                "$ERR_COMMON: ${e.message}",
                                 code = -1,
                                 cause = e
                             )
                         )
                         return@flow
                     }
+
                     emit(ResultApi.Success(userDetail.toUserInfo()))
                 }
             }
