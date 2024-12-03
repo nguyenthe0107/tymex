@@ -14,7 +14,6 @@ interface DispatcherProvider {
     val io: CoroutineDispatcher
 
     val default: CoroutineDispatcher
-
 }
 
 class DefaultDispatcherProvider : DispatcherProvider {

@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     testImplementation(libs.junit)
+    testImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -91,7 +92,8 @@ dependencies {
     testImplementation( libs.mockk)
     testImplementation(libs.mockk.agent.jvm)
     // Turbine for testing Flow
-    testImplementation(libs.turbine)
+    testImplementation(libs.truth)
+    testImplementation(libs.turbine.v0121)
 
     // Compose dependencies
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -105,6 +107,10 @@ dependencies {
     //Dagger - Hilt
     implementation(libs.hilt.android.v2511)
     kapt(libs.hilt.android.compiler.v2511)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler.v2511)
 
     // OkHttp
     implementation(libs.okhttp)

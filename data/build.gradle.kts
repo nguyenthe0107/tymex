@@ -63,8 +63,8 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
-    implementation(project(":di"))
 
+    implementation(project(":di"))
     implementation(project(":domain"))
 
     //Dagger - Hilt

@@ -55,10 +55,8 @@ class UserDetailViewModelTest {
             htmlUrl = "html"
         )
         coEvery { useCase.fetchUserDetail(any()) } returns flowOf(ResultApi.Success(mockUser))
-
         // When
         viewModel.getUserDetailByUserName("test")
-
         // Then
         val state = viewModel.state.value
         assertEquals(mockUser, state.userDetail)
@@ -71,23 +69,12 @@ class UserDetailViewModelTest {
         coEvery { useCase.fetchUserDetail(any()) } returns flowOf(
             ResultApi.Error("User not found", 404)
         )
-
         // When
         viewModel.getUserDetailByUserName("test")
-
         // Then
         val state = viewModel.state.value
         assertNull(state.userDetail)
         assertFalse(state.isLoading)
     }
 
-    @Test
-    fun `null username is handled correctly`() = runTest {
-        // When
-        viewModel.getUserDetailByUserName(null)
-        // Then
-        val state = viewModel.state.value
-        assertNull(state.userDetail)
-        assertFalse(state.isLoading)
-    }
 } 

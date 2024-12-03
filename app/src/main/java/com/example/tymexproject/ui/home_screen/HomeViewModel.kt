@@ -20,7 +20,6 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        const val TAG = "HomeViewModel"
         const val PER_PAGE = 20
     }
 
@@ -30,13 +29,15 @@ class HomeViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiHomeEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    init {
-        getUserList(isLoadMore = false)
-    }
-
     fun getUserList(isLoadMore: Boolean = false) {
         if (!isLoadMore && state.value.isLoading) return
-        if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)) return
+        if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)){
+            _state.value = state.value.copy(
+                isLoading = false,
+                isLoadingMore = false,
+            )
+            return
+        }
         viewModelScope.launch(dispatcherProvider.io) {
             if (isLoadMore) {
                 _state.value = state.value.copy(isLoadingMore = true)
@@ -44,16 +45,16 @@ class HomeViewModel @Inject constructor(
                 _state.value = state.value.copy(isLoading = true)
             }
             val since = if (isLoadMore) {
-                state.value.userList.lastOrNull()?.id ?: 0
+                state.value.userList.lastOrNull()?.id ?: 1
             } else {
-                0
+                1
             }
             userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = since)
                 .collect { result ->
                     when(result) {
                         is ResultApi.Success -> {
                             val newList = if (isLoadMore) {
-                                state.value.userList + result.data
+                                state.value.userList.plus(result.data)
                             } else {
                                 result.data
                             }
