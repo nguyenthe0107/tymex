@@ -38,20 +38,17 @@ class HomeViewModel @Inject constructor(
             )
             return
         }
-
         viewModelScope.launch(dispatcherProvider.io) {
             if (isLoadMore) {
                 _state.value = state.value.copy(isLoadingMore = true)
             } else {
                 _state.value = state.value.copy(isLoading = true)
             }
-
             val since = if (isLoadMore) {
                 (state.value.currentPage - 1) * PER_PAGE + 1
             } else {
                 1
             }
-
             userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = since)
                 .collect { result ->
                     when (result) {

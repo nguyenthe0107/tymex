@@ -53,7 +53,9 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(state.userList, key = { it.id }) { userInfo ->
+                items(state.userList, key = { userInfo ->
+                    "${userInfo.id}_${userInfo.userName}_${state.userList.indexOf(userInfo)}_${System.nanoTime()}".hashCode()
+                }) { userInfo ->
                     UserInfoCard(user = userInfo, onClick = {
                         navController.navigate(
                             Screens.UserDetailScreen.route.replace(
