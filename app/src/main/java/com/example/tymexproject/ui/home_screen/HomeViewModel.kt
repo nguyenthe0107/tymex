@@ -31,30 +31,33 @@ class HomeViewModel @Inject constructor(
 
     fun getUserList(isLoadMore: Boolean = false) {
         if (!isLoadMore && state.value.isLoading) return
-        if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)){
+        if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)) {
             _state.value = state.value.copy(
                 isLoading = false,
                 isLoadingMore = false,
             )
             return
         }
+
         viewModelScope.launch(dispatcherProvider.io) {
             if (isLoadMore) {
                 _state.value = state.value.copy(isLoadingMore = true)
             } else {
                 _state.value = state.value.copy(isLoading = true)
             }
+
             val since = if (isLoadMore) {
-                state.value.userList.lastOrNull()?.id ?: 1
+                (state.value.currentPage - 1) * PER_PAGE + 1
             } else {
                 1
             }
+
             userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = since)
                 .collect { result ->
-                    when(result) {
+                    when (result) {
                         is ResultApi.Success -> {
                             val newList = if (isLoadMore) {
-                                state.value.userList.plus(result.data)
+                                state.value.userList + result.data
                             } else {
                                 result.data
                             }
@@ -63,18 +66,22 @@ class HomeViewModel @Inject constructor(
                                 isLoading = false,
                                 isLoadingMore = false,
                                 currentPage = state.value.currentPage + 1,
-                                canLoadMore = result.data.isNotEmpty()
+                                canLoadMore = result.data.size == PER_PAGE
                             )
                         }
+
                         is ResultApi.Error -> {
                             _state.value = state.value.copy(
                                 isLoading = false,
                                 isLoadingMore = false
                             )
-                            _eventFlow.emit(UiHomeEvent.ShowError(
-                                result.message
-                            ))
+                            _eventFlow.emit(
+                                UiHomeEvent.ShowError(
+                                    result.message
+                                )
+                            )
                         }
+
                         is ResultApi.Loading -> {
                             _state.value = state.value.copy(
                                 isLoading = true,

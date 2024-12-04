@@ -1,9 +1,12 @@
 package com.example.tymexproject.ui.home_screen
+
 import app.cash.turbine.test
 import com.example.common.di.module.DispatcherProvider
 import com.example.domain.model.UserInfoResponse
 import com.example.domain.usecase.UserInfoUseCase
 import com.example.domain.utils.ResultApi
+import com.google.common.truth.Truth.assertThat
+import com.tymex.data.repositoryImpl.Constants
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -13,8 +16,6 @@ import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import com.google.common.truth.Truth.assertThat
-import com.tymex.data.repositoryImpl.Constants
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -24,9 +25,15 @@ class HomeViewModelTest {
     private lateinit var dispatcherProvider: DispatcherProvider
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    companion object {
+    private val mockUser = UserInfoResponse(
+        id = 1,
+        userName = "test",
+        avatarUrl = "url",
+        htmlUrl = "html"
+    )
+
+    companion object{
         const val PER_PAGE = 20
-        const val PAGE = 1
     }
 
     @Before
@@ -42,81 +49,144 @@ class HomeViewModelTest {
 
     @After
     fun tearDown() {
-        Dispatchers.resetMain() // Reset to the main dispatcher after the tests
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun `getUserList should update state with users when API call is successful`() = runTest {
+    fun `initial state should be correct`() {
+        val state = viewModel.state.value
+        assertThat(state.userList).isEmpty()
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.isLoadingMore).isFalse()
+        assertThat(state.canLoadMore).isTrue()
+        assertThat(state.currentPage).isEqualTo(1)
+    }
+
+    @Test
+    fun `getUserList should fetch first page with since=1`() = runTest {
         // Arrange
-        val mockUsers = listOf(
-            UserInfoResponse(id = 1, userName = "test", avatarUrl = "url", htmlUrl = "html")
-        )
-        coEvery { userInfoUseCase.fetchUserList(PER_PAGE, 1) } returns flowOf(ResultApi.Success(mockUsers))
+        val firstPageUsers = listOf(mockUser.copy(id = 1))
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Success(firstPageUsers))
+
         // Act
         viewModel.getUserList(isLoadMore = false)
+        advanceUntilIdle()
+
         // Assert
-        advanceUntilIdle() // Ensure all coroutines finish
         val state = viewModel.state.value
-        assertThat(state.userList).isEqualTo(mockUsers)
+        assertThat(state.userList).isEqualTo(firstPageUsers)
         assertThat(state.isLoading).isFalse()
+        assertThat(state.currentPage).isEqualTo(2)
+        assertThat(state.canLoadMore).isEqualTo(state.userList.size == PER_PAGE)
+    }
+
+    @Test
+    fun getUserList_shouldLoadMore_withCorrectSinceValue() = runTest {
+        // Arrange - First page (20 items)
+        val firstPageUsers = List(PER_PAGE) { index ->
+            mockUser.copy(id = index + 1)
+        }
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Success(firstPageUsers))
+        // Arrange - Second page (20 items)
+        val secondPageUsers = List(PER_PAGE) { index ->
+            mockUser.copy(id = index + 21) // IDs start from 21
+        }
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 21) } returns flowOf(ResultApi.Success(secondPageUsers))
+        // Act - Load first page
+        viewModel.getUserList(isLoadMore = false)
+        advanceUntilIdle()
+
+        // Assert first page
+        var state = viewModel.state.value
+        assertThat(state.userList).isEqualTo(firstPageUsers)
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.currentPage).isEqualTo(2)
         assertThat(state.canLoadMore).isTrue()
+
+        // Act - Load second page
+        viewModel.getUserList(isLoadMore = true)
+        advanceUntilIdle()
+
+        // Assert after load more
+        state = viewModel.state.value
+        assertThat(state.userList).isEqualTo(firstPageUsers + secondPageUsers)
+        assertThat(state.isLoadingMore).isFalse()
+        assertThat(state.currentPage).isEqualTo(3)
+        assertThat(state.canLoadMore).isTrue()
+        assertThat(state.userList.size).isEqualTo(40) // Should have 40 items total
     }
 
     @Test
     fun `getUserList should emit error event when API call fails`() = runTest {
         // Arrange
         val errorMessage = Constants.ERR_COMMON
-        coEvery { userInfoUseCase.fetchUserList(PER_PAGE, PAGE) } returns flowOf(ResultApi.Error(errorMessage))
-        // Act
-        viewModel.getUserList(isLoadMore = false)
-        // Assert
-        advanceUntilIdle()
-        val state = viewModel.state.value
-        assertThat(state.isLoading).isFalse()
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Error(errorMessage))
+
+        // Act & Assert
         viewModel.eventFlow.test {
+            viewModel.getUserList(isLoadMore = false)
+            advanceUntilIdle()
+
+            // Verify state
+            val state = viewModel.state.value
+            assertThat(state.isLoading).isFalse()
+            assertThat(state.isLoadingMore).isFalse()
+
+            // Verify error event
             val event = awaitItem()
-            //assertThat(event).isInstanceOf(UiHomeEvent.ShowError::class.java)
-            //assertThat((event as UiHomeEvent.ShowError).message).isEqualTo(errorMessage)
+            assertThat(event).isInstanceOf(UiHomeEvent.ShowError::class.java)
+            assertThat((event as UiHomeEvent.ShowError).message).isEqualTo(errorMessage)
         }
     }
 
     @Test
-    fun `getUserList should append users when loading more`() = runTest {
-        val user1 = listOf(mockUser.copy(id = 1))
-        val user2 = listOf(mockUser.copy(id = 2))
+    fun `getUserList should set canLoadMore false when receiving less than PER_PAGE items`() = runTest {
+        // Arrange
+        val incompletePageUsers = listOf(mockUser.copy(id = 1)) // Less than PER_PAGE items
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Success(incompletePageUsers))
 
-        coEvery { userInfoUseCase.fetchUserList(PER_PAGE, 1) } returns flowOf(ResultApi.Success(user1))
-        coEvery { userInfoUseCase.fetchUserList(PER_PAGE, 2) } returns flowOf(ResultApi.Success(user2))
-
+        // Act
         viewModel.getUserList(isLoadMore = false)
         advanceUntilIdle()
-        
-        viewModel.getUserList(isLoadMore = true)
-        advanceUntilIdle()
 
+        // Assert
         val state = viewModel.state.value
-        println(state.userList)
-        assertThat(state.userList).isEqualTo(user1 + user2)
-        assertThat(state.isLoadingMore).isFalse()
-        assertThat(state.canLoadMore).isTrue()
+        assertThat(state.canLoadMore).isFalse()
     }
 
     @Test
-    fun `getUserList should set loading state correctly`() = runTest {
+    fun `getUserList should not load more when already loading`() = runTest {
         // Arrange
-        coEvery { userInfoUseCase.fetchUserList(PER_PAGE, PAGE) } returns flowOf(ResultApi.Loading)
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Loading)
+
         // Act
         viewModel.getUserList(isLoadMore = false)
+        viewModel.getUserList(isLoadMore = false) // Second call should be ignored
+
         // Assert
         val state = viewModel.state.value
         assertThat(state.isLoading).isTrue()
     }
 
-    private val mockUser = UserInfoResponse(
-        id = 1,
-        userName = "test",
-        avatarUrl = "url",
-        htmlUrl = "html"
-    )
+    @Test
+    fun `getUserList should not load more when canLoadMore is false`() = runTest {
+        // Arrange - Set up initial state with canLoadMore = false
+        val incompletePageUsers = listOf(mockUser.copy(id = 1))
+        coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Success(incompletePageUsers))
+
+        // Act - First load to set canLoadMore = false
+        viewModel.getUserList(isLoadMore = false)
+        advanceUntilIdle()
+
+        // Act - Try to load more
+        viewModel.getUserList(isLoadMore = true)
+        advanceUntilIdle()
+
+        // Assert
+        val state = viewModel.state.value
+        assertThat(state.isLoadingMore).isFalse()
+        assertThat(state.canLoadMore).isFalse()
+        assertThat(state.userList).isEqualTo(incompletePageUsers)
+    }
 }
 
