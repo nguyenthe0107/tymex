@@ -76,6 +76,42 @@ Using Hilt with main modules:
 - Kotlin version: 1.9.0
 
 ## Overview Flow 
-![img_1.png](img_1.png)
+mermaid
+graph TD
+subgraph Application[:MyApp]
+subgraph "Presentation Layer"
+direction TB
+subgraph "MVVM + multi module"
+end
+end
+subgraph "DesignSystem"
+direction TB
+DA[":designsystem"]
+style DA fill:#b3d9ff
+subgraph "Core Design system"
+end
+end
+subgraph "DI"
+direction TB
+DI[":Dependencies"]
+style DI fill:#b3d9ff
+subgraph "Provide Dependencies"
+end
+end
+subgraph "Domain Layer"
+direction TB
+D[":domain"]
+style D fill:#b3d9ff
+subgraph "Kotlin"
+end
+end
+subgraph "Data Layer"
+direction TB
+DAT[":data"]
+style DAT fill:#b3d9ff
+subgraph "Repository pattern"
+end
+end
+end
 Flow of control apply with coroutine
 ![img.png](img.png)
