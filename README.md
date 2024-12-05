@@ -78,38 +78,45 @@ Using Hilt with main modules:
 ## Overview Flow
 ```mermaid
 graph TD
-subgraph App[:MyApp]
-PL[Presentation Layer]
-DS[Design System]
-DI[Dependency Injection]
-DL[Domain Layer]
-DAL[Data Layer]
-PL --> DS
-PL --> DL
-PL --> DI
-DAL --> DL
-DI --> DAL
-end
-subgraph Presentation
-PL --> MVVM[MVVM + Multi Module]
-end
-subgraph Design
-DS --> Core[Core Design System]
-end
-subgraph Dependencies
-DI --> Hilt[Provide Dependencies]
-end
-subgraph Domain
-DL --> Logic[Kotlin Business Logic]
-end
-subgraph Data
-DAL --> Repo[Repository Pattern]
-end
-style PL fill:#b3d9ff
-style DS fill:#b3d9ff
-style DI fill:#b3d9ff
-style DL fill:#b3d9ff
-style DAL fill:#b3d9ff
+    subgraph Application[:MyApp]
+        subgraph "Presentation Layer"
+            direction TB
+            subgraph "MVVM + multi module"
+            end
+        end
+
+        subgraph "DesignSystem"
+            direction TB
+            DA[":designsystem"]
+            style DA fill:#b3d9ff
+            subgraph "Core Design system"
+            end
+        end
+
+        subgraph "DI"
+            direction TB
+            DA[":Dependencies"]
+            style DA fill:#b3d9ff
+            subgraph "Provide Dependencies"
+            end
+        end
+
+        subgraph "Domain Layer"
+            direction TB
+            D[":domain"]
+            style D fill:#b3d9ff
+            subgraph "Kotlin"
+            end
+        end
+
+        subgraph "Data Layer"
+            direction TB
+            DA[":data"]
+            style DA fill:#b3d9ff
+            subgraph "Repository pattern"
+            end
+        end
+    end
 ```
 
 Flow of control apply with coroutine
