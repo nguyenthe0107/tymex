@@ -113,7 +113,8 @@ class HomeViewModelTest {
         assertThat(state.isLoadingMore).isFalse()
         assertThat(state.currentPage).isEqualTo(3)
         assertThat(state.canLoadMore).isTrue()
-        assertThat(state.userList.size).isEqualTo(40) // Should have 40 items total
+        // Should have 40 items total
+        assertThat(state.userList.size).isEqualTo(40)
     }
 
     @Test
