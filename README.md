@@ -95,9 +95,9 @@ graph TD
 
         subgraph "DI"
             direction TB
-            DA[":Dependencies"]
+            D[":di"]
             style DA fill:#b3d9ff
-            subgraph "Provide Dependencies"
+            subgraph "Manage Dependencies"
             end
         end
 
@@ -111,7 +111,7 @@ graph TD
 
         subgraph "Data Layer"
             direction TB
-            DA[":data"]
+            D[":data"]
             style DA fill:#b3d9ff
             subgraph "Repository pattern"
             end
