@@ -75,8 +75,8 @@ Using Hilt with main modules:
 - Target SDK: 34
 - Kotlin version: 1.9.0
 
-## Overview Flow 
-mermaid
+## Overview Flow
+```mermaid
 graph TD
 subgraph Application[:MyApp]
 subgraph "Presentation Layer"
@@ -113,5 +113,7 @@ subgraph "Repository pattern"
 end
 end
 end
+```
+
 Flow of control apply with coroutine
 ![img.png](img.png)
