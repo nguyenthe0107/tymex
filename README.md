@@ -1,7 +1,7 @@
 ## Architecture
 
 The project follows Clean Architecture principles combined with MVVM pattern:
-Document:
+## Document:
 Clean architect structure https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
 
 ### Main Layers:
