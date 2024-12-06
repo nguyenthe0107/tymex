@@ -1,5 +1,6 @@
 package com.example.common.di.module
 import com.example.common.di.qualifier.AppBaseUrl
+import com.example.config.NetworkConfig
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -19,7 +20,7 @@ object NetworkModule {
     @Singleton
     @AppBaseUrl
     fun provideBaseUrl(): String {
-        return "https://api.github.com/"
+        return NetworkConfig.BASE_URL
     }
 
     /**

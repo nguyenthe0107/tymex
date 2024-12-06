@@ -1,5 +1,6 @@
 package com.example.common.di.module
 
+import com.example.config.NetworkConfig
 import io.mockk.mockk
 import okhttp3.OkHttpClient
 import org.junit.Assert.*
@@ -15,7 +16,7 @@ class NetworkModuleTest {
         val baseUrl = module.provideBaseUrl()
 
         // Then
-        assertEquals("https://api.github.com/", baseUrl)
+        assertEquals(NetworkConfig.BASE_URL, baseUrl)
     }
 
     @Test

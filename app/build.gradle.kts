@@ -20,20 +20,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "BASE_URL", "\"https://dev-api.github.com/\"")
     }
 
     buildTypes {
-        debug {
-            buildConfigField("String", "BASE_URL", "\"https://dev-api.github.com/\"")
-        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BASE_URL", "\"https://api.github.com/\"")
         }
     }
     compileOptions {
@@ -59,6 +54,12 @@ android {
 
 dependencies {
 
+    // module
+    implementation(project(":domain"))
+    implementation(project(":di"))
+    implementation(project(":designsystem"))
+    implementation(project(":data"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -67,12 +68,6 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    // module
-    implementation(project(":domain"))
-    implementation(project(":di"))
-    implementation(project(":designsystem"))
-    implementation(project(":data"))
     implementation(libs.androidx.constraintlayout)
 
     testImplementation(libs.junit)
