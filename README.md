@@ -2,6 +2,7 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
+📦 project
 ┣ 📂 app
 ┃ ┣ 📂 ui
 ┃ ┗ 📂 di
@@ -26,7 +27,9 @@ The project follows Clean Architecture principles combined with MVVM pattern, or
 ┣ 📂 config
 ┃ ┗ 📜 NetworkConfig.kt
 ┃
-
+┗ 📂 common
+┣ 📂 extensions
+┗ 📂 utils
 ## Overview Architect
 ```mermaid
 graph TD
