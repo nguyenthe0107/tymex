@@ -93,6 +93,14 @@ graph TD
             end
         end
 
+        subgraph "Config"
+            direction TB
+            DA[":config"]
+            style DA fill:#b3d9ff
+            subgraph "Config system"
+            end
+        end
+
         subgraph "DI"
             direction TB
             D[":di"]
