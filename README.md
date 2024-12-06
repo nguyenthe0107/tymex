@@ -2,34 +2,8 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
-📦 project
-┣ 📂 app
-┃ ┣ 📂 ui
-┃ ┗ 📂 di
-┃
-┣ 📂 data
-┃ ┣ 📂 api
-┃ ┣ 📂 repository
-┃ ┗ 📂 di
-┃
-┣ 📂 domain
-┃ ┣ 📂 model
-┃ ┣ 📂 repository
-┃ ┗ 📂 usecase
-┃
-┣ 📂 designsystem
-┃ ┣ 📂 theme
-┃ ┃ ┣ 📜 Color.kt
-┃ ┃ ┣ 📜 Type.kt
-┃ ┃ ┗ 📜 Shape.kt
-┃ ┗ 📂 components
-┃
-┣ 📂 config
-┃ ┗ 📜 NetworkConfig.kt
-┃
-┗ 📂 common
-┣ 📂 extensions
-┗ 📂 utils
+![Screenshot 2024-12-06 at 22.44.05.png](Screenshot%202024-12-06%20at%2022.44.05.png)![Scre
+
 ## Overview Architect
 ```mermaid
 graph TD
