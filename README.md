@@ -2,7 +2,7 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
-├── app/                 # Main application module
+├── app/                # Main application module
 │   ├── ui/             # UI Components and ViewModels
 │   └── di/             # App level dependency injection
 │
@@ -82,15 +82,39 @@ graph TD
 Flow of control apply with coroutine
 ![img.png](img.png)
 
-## Data Flow Example
-    UI->>ViewModel: Request user list
-    ViewModel->>UseCase: fetchUserList()
-    UseCase->>Repository: fetchUserList()
-    Repository->>API: HTTP Request
-    API-->>Repository: Response
-    Repository-->>UseCase: Flow<ResultApi>
-    UseCase-->>ViewModel: Flow<ResultApi>
-    ViewModel-->>UI: Update UI State
+## Flow Description
+
+1. **UI to ViewModel**
+   - UI triggers a request to load user list
+   - ViewModel receives the request and initiates the data fetch
+
+2. **ViewModel to UseCase**
+   - ViewModel calls UseCase's fetchUserList method
+   - UseCase handles business logic
+
+3. **UseCase to Repository**
+   - UseCase delegates the data fetching to Repository
+   - Repository decides data source (API/Cache)
+
+4. **Repository to API**
+   - Repository makes HTTP request to API
+   - API processes the request
+
+5. **API to Repository**
+   - API sends back response
+   - Repository processes the response
+
+6. **Repository to UseCase**
+   - Repository wraps data in Flow<ResultApi>
+   - Handles success/error states
+
+7. **UseCase to ViewModel**
+   - UseCase passes Flow<ResultApi> to ViewModel
+   - ViewModel can process the data if needed
+
+8. **ViewModel to UI**
+   - ViewModel updates UI state
+   - UI reflects the changes
 
 ## Key Features
 1. **User List Display**
