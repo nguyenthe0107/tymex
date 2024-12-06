@@ -2,33 +2,30 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
-├── app/                 # Main application module
-│   ├── ui/             # UI Components and ViewModels
-│   └── di/             # App level dependency injection
-│
-├── data/               # Data layer implementation
-│   ├── api/            # API Services
-│   ├── repository/     # Repository Implementations
-│   └── di/             # Data layer DI modules
-│
-├── domain/             # Business logic and interfaces
-│   ├── model/          # Domain Models
-│   ├── repository/     # Repository Interfaces
-│   └── usecase/        # Use Cases
-│
-├── designsystem/       # UI Component Library
-│   ├── theme/          # App Theme
-│   │   ├── Color.kt    # Color Definitions
-│   │   ├── Type.kt     # Typography
-│   │   └── Shape.kt    # Shapes
-│   └── components/     # Reusable UI Components
-│
-├── config/             # Network Configuration
-│   └── NetworkConfig.kt # Base URL and API Constants
-│
-└── common/             # Shared Utilities and Constants
-    ├── extensions/     # Kotlin Extensions
-    └── utils/          # Utility Classes
+┣ 📂 app
+┃ ┣ 📂 ui
+┃ ┗ 📂 di
+┃
+┣ 📂 data
+┃ ┣ 📂 api
+┃ ┣ 📂 repository
+┃ ┗ 📂 di
+┃
+┣ 📂 domain
+┃ ┣ 📂 model
+┃ ┣ 📂 repository
+┃ ┗ 📂 usecase
+┃
+┣ 📂 designsystem
+┃ ┣ 📂 theme
+┃ ┃ ┣ 📜 Color.kt
+┃ ┃ ┣ 📜 Type.kt
+┃ ┃ ┗ 📜 Shape.kt
+┃ ┗ 📂 components
+┃
+┣ 📂 config
+┃ ┗ 📜 NetworkConfig.kt
+┃
 
 ## Overview Architect
 ```mermaid
