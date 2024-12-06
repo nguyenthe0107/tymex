@@ -83,7 +83,7 @@ Flow of control apply with coroutine
 ![img.png](img.png)
 
 ## Data Flow Example
-```
+```mermaid
 sequenceDiagram
     UI->>ViewModel: Request user list
     ViewModel->>UseCase: fetchUserList()
@@ -94,7 +94,6 @@ sequenceDiagram
     UseCase-->>ViewModel: Flow<ResultApi>
     ViewModel-->>UI: Update UI State
 ```
-
 
 ## Key Features
 1. **User List Display**
