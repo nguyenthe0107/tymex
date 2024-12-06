@@ -2,7 +2,7 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
-├── app/                # Main application module
+├── app/                 # Main application module
 │   ├── ui/             # UI Components and ViewModels
 │   └── di/             # App level dependency injection
 │
@@ -26,6 +26,9 @@ The project follows Clean Architecture principles combined with MVVM pattern, or
 ├── config/             # Network Configuration
 │   └── NetworkConfig.kt # Base URL and API Constants
 │
+└── common/             # Shared Utilities and Constants
+    ├── extensions/     # Kotlin Extensions
+    └── utils/          # Utility Classes
 
 ## Overview Architect
 ```mermaid
