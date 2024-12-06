@@ -87,7 +87,7 @@ graph TD
 
         subgraph "DesignSystem"
             direction TB
-            DA[":designsystem"]
+            D[":designsystem"]
             style DA fill:#b3d9ff
             subgraph "Core Design system"
             end
@@ -95,7 +95,7 @@ graph TD
 
         subgraph "Config"
             direction TB
-            DA[":config"]
+            D[":config"]
             style DA fill:#b3d9ff
             subgraph "Config system"
             end
