@@ -27,12 +27,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.designsystem.component.LoadingComponent
 import com.example.designsystem.component.ScaffoldTopAppbar
 import com.example.domain.model.UserInfoResponse
 import com.example.tymexproject.R
-import com.example.tymexproject.common_components.LoadingComponent
 import com.example.tymexproject.ui.components.UserInfoCard
 import com.example.tymexproject.ui.user_detail_screen.components.StatItem
+
+/**
+ * UserDetailScreen displays detailed information about a specific GitHub user
+ *
+ * @param userName GitHub username to fetch details for
+ * @param navController Navigation controller for handling screen navigation
+ * @param userDetailViewModel ViewModel that manages the user detail data and state
+ */
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -42,9 +50,11 @@ fun UserDetailScreen(
     userDetailViewModel: UserDetailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    // Fetch user details when screen is launched
     LaunchedEffect(Unit) {
         userDetailViewModel.getUserDetailByUserName(userName)
     }
+    // Handle UI events (like error messages)
     LaunchedEffect(key1 = true) {
         userDetailViewModel.eventFlow.collect { event ->
             when (event) {

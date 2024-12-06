@@ -23,8 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.designsystem.component.MySpacer
 import com.example.domain.model.UserInfoResponse
-import com.example.tymexproject.common_components.MySpacer
 import java.util.Locale
 
 @Composable

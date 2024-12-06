@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the User Detail Screen that manages fetching and displaying user details
+ *
+ * @property userInfoUseCase Use case for fetching user information
+ * @property dispatcherProvider Provides coroutine dispatchers for async operations
+ */
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
     private val userInfoUseCase: UserInfoUseCase,
@@ -25,13 +31,24 @@ class UserDetailViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiUserDetailEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    fun getUserDetailByUserName(userName:String?) {
+    /**
+     * Fetches detailed information for a specific GitHub user
+     *
+     * @param userName The GitHub username to fetch details for
+     *
+     * Flow:
+     * 1. Set loading state
+     * 2. Fetch user details
+     * 3. Handle success/error states
+     * 4. Update UI state accordingly
+     */
+    fun getUserDetailByUserName(userName: String?) {
         viewModelScope.launch(dispatcherProvider.io) {
             _state.value = state.value.copy(isLoading = true)
             userName?.let {
                 userInfoUseCase.fetchUserDetail(it)
                     .collect { result ->
-                        when(result){
+                        when (result) {
                             is ResultApi.Success -> {
                                 _state.value = state.value.copy(userDetail = result.data)
                                 _state.value = state.value.copy(isLoading = false)

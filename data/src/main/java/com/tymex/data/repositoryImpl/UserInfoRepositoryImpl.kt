@@ -12,14 +12,33 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
+/**
+ * Implementation of UserInfoRepository that handles user data operations
+ *
+ * This repository implements caching strategy with local storage fallback
+ * and handles both network and cached data operations.
+ *
+ * @property apiService Service for API calls
+ * @property userPreferencesManager Manager for local data persistence
+ */
 class UserInfoRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val userPreferencesManager: UserPreferencesManager
 ) : UserInfoRepository {
 
-    /*
-    * function to get users from api
-    * */
+    /**
+     * Fetches paginated list of users
+     *
+     * @param perPage Number of items per page
+     * @param since ID to start fetching from
+     * @return Flow of ResultApi containing list of users
+     *
+     * Flow steps:
+     * 1. Emit loading state
+     * 2. Try fetching from API
+     * 3. Cache successful response
+     * 4. Fallback to cache on error
+     */
     override suspend fun fetchUserList(
         perPage: Int,
         since: Int
@@ -57,9 +76,18 @@ class UserInfoRepositoryImpl @Inject constructor(
         }
     }
 
-    /*
-    * function to get detail user by userName
-    * */
+    /**
+     * Fetches detailed information for a specific user
+     *
+     * @param userName Username to fetch details for
+     * @return Flow of ResultApi containing user details
+     *
+     * Flow steps:
+     * 1. Emit loading state
+     * 2. Try fetching from API
+     * 3. Fallback to cache on error
+     * 4. Handle various error cases
+     */
     override suspend fun fetchUserDetail(userName: String): Flow<ResultApi<UserInfoResponse>> {
         return flow {
             emit(ResultApi.Loading)
@@ -100,7 +128,6 @@ class UserInfoRepositoryImpl @Inject constructor(
                         )
                         return@flow
                     }
-
                     emit(ResultApi.Success(userDetail.toUserInfo()))
                 }
             }

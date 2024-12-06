@@ -2,7 +2,6 @@ package com.example.tymexproject.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,7 +33,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(route = Screens.UserDetailScreen.route) {
                             val userName = it.arguments?.getString("user_name")
-                            Log.e("WTF", "userName $userName")
                             UserDetailScreen(userName,navController)
                         }
                     }

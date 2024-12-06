@@ -1,4 +1,4 @@
-package com.example.tymexproject.common_components
+package com.example.designsystem.component
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height

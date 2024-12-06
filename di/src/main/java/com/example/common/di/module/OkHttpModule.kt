@@ -13,6 +13,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object OkHttpModule {
 
+    /**
+     * Provides a logging interceptor for HTTP request/response logging
+     *
+     * Features:
+     * - Logs HTTP headers and body
+     * - Useful for debugging API calls
+     * - Singleton instance for consistent logging
+     *
+     * @return Configured HttpLoggingInterceptor
+     */
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
@@ -22,12 +32,35 @@ object OkHttpModule {
         return loggingInterceptor
     }
 
+    /**
+     * Provides an authentication interceptor
+     *
+     * Features:
+     * - Handles API authentication
+     * - Adds authentication headers to requests
+     * - Singleton instance for consistent auth handling
+     *
+     * @return Configured AuthInterceptor
+     */
     @Provides
     @Singleton
     fun provideAuthInterceptor(): AuthInterceptor {
         return AuthInterceptor()
     }
 
+    /**
+     * Provides configured OkHttpClient instance
+     *
+     * Features:
+     * - Adds authentication handling
+     * - Includes logging for debugging
+     * - Configures timeout settings
+     * - Singleton instance for app-wide use
+     *
+     * @param authInterceptor Interceptor for handling authentication
+     * @param loggingInterceptor Interceptor for logging
+     * @return Configured OkHttpClient
+     */
     @Provides
     @Singleton
     fun provideOkHttpClient(

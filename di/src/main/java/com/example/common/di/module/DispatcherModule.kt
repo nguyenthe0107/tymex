@@ -7,6 +7,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
+/**
+ * Interface defining different coroutine dispatchers for the application
+ *
+ * This interface allows for better testing by making it possible to swap
+ * dispatchers in tests while maintaining consistent dispatcher usage in production
+ */
 interface DispatcherProvider {
 
     val main: CoroutineDispatcher

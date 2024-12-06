@@ -24,6 +24,13 @@ import com.example.tymexproject.R
 import com.example.tymexproject.routes.Screens
 import com.example.tymexproject.ui.components.UserInfoCard
 
+/**
+ * HomeScreen is the main screen that displays a list of users with infinite scroll functionality
+ *
+ * @param navController Navigation controller for handling screen navigation
+ * @param homeViewModel ViewModel that manages the UI state and business logic
+ */
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
@@ -32,6 +39,10 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val state = homeViewModel.state.value
+    LaunchedEffect(Unit) {
+        homeViewModel.getUserList(isLoadMore = false)
+    }
+    // Handle UI events
     LaunchedEffect(key1 = true) {
         homeViewModel.eventFlow.collect { event ->
             when (event) {
@@ -41,7 +52,6 @@ fun HomeScreen(
             }
         }
     }
-
     ScaffoldTopAppbar(
         title = stringResource(R.string.tvTitleHome),
     ) { paddingValues ->

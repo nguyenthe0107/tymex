@@ -1,5 +1,8 @@
 package com.example.domain.model
 
+/**
+ User info response
+ */
 data class UserInfoResponse(
     val id: Int,
     val userName: String,

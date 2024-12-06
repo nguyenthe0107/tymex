@@ -1,5 +1,4 @@
-
-package com.example.tymexproject.common_components
+package com.example.designsystem.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ Loading component for displaying a loading indicator.
+ * **/
 @Composable
 fun LoadingComponent() {
     Box(

@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Home Screen that manages user list data and pagination
+ *
+ * @property userInfoUseCase Use case for fetching user information
+ * @property dispatcherProvider Provides coroutine dispatchers for async operations
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userInfoUseCase: UserInfoUseCase,
@@ -20,15 +26,21 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        const val PER_PAGE = 20
+        const val PER_PAGE = 20 // Number of items to load per page
     }
 
+    // UI state holder
     private val _state = mutableStateOf(HomeState())
     val state: State<HomeState> = _state
 
     private val _eventFlow = MutableSharedFlow<UiHomeEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    /**
+     * Fetches user list with pagination support
+     *
+     * @param isLoadMore If true, loads next page; if false, refreshes from start
+     */
     fun getUserList(isLoadMore: Boolean = false) {
         if (!isLoadMore && state.value.isLoading) return
         if (isLoadMore && (state.value.isLoadingMore || !state.value.canLoadMore)) {
@@ -39,20 +51,24 @@ class HomeViewModel @Inject constructor(
             return
         }
         viewModelScope.launch(dispatcherProvider.io) {
+            // Update loading state based on operation type
             if (isLoadMore) {
                 _state.value = state.value.copy(isLoadingMore = true)
             } else {
                 _state.value = state.value.copy(isLoading = true)
             }
+            // Calculate starting point for pagination
             val since = if (isLoadMore) {
                 (state.value.currentPage - 1) * PER_PAGE + 1
             } else {
                 1
             }
+            // Fetch users and handle different states
             userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = since)
                 .collect { result ->
                     when (result) {
                         is ResultApi.Success -> {
+                            // Append new data for pagination, replace for refresh
                             val newList = if (isLoadMore) {
                                 state.value.userList + result.data
                             } else {

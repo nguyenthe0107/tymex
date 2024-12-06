@@ -19,6 +19,30 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a statistic item with a count, label, and icon in a circular container.
+ *
+ * @param count The numerical value or count to be displayed (as String)
+ * @param label The descriptive text shown below the count
+ * @param icon The ImageVector to be displayed as an icon above the count
+ *
+ *
+ * Example usage:
+ * ```
+ * StatItem(
+ *     count = "42",
+ *     label = "Followers",
+ *     icon = Icons.Default.Person
+ * )
+ * ```
+ *
+ * Styling:
+ * - Uses MaterialTheme for consistent theming
+ * - Icon background: Gray with 20% opacity
+ * - Text styles: titleMedium for count, bodyMedium for label
+ * - Label color: onSurfaceVariant from MaterialTheme
+ */
+
 @Composable
 fun StatItem(
     count: String,

@@ -13,18 +13,32 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Saves a list of users to DataStore
+ */
 @Singleton
 class UserPreferencesManager @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val gson: Gson
 ) {
     companion object {
+        // Key for storing user list
         private val USER_LIST = stringPreferencesKey("user_list")
-        private val CURRENT_USER_ID = intPreferencesKey("current_user_id")
+        // Key for last cache timestamp
         private val LAST_CACHED_TIME = longPreferencesKey("last_cached_time")
+        // Key for last user ID
         private val LAST_SINCE_ID = intPreferencesKey("last_since_id")
     }
 
+    /**
+     * Saves a list of users to DataStore
+     * This method:
+     * - Converts users list to JSON
+     * - Stores the current timestamp
+     * - Updates the last seen user ID
+     *
+     * @param users List of users to be saved
+     */
     suspend fun saveUserList(users: List<UserInfoDTO>) {
         dataStore.edit { preferences ->
             val usersJson = gson.toJson(users)
@@ -36,12 +50,30 @@ class UserPreferencesManager @Inject constructor(
         }
     }
 
+    /**
+     * Appends new users to the existing list
+     * This method:
+     * - Retrieves current users
+     * - Combines with new users
+     * - Removes duplicates based on ID
+     *
+     * @param newUsers List of new users to append
+     */
     suspend fun appendUserList(newUsers: List<UserInfoDTO>) {
         val currentUsers = getUserList().first() ?: emptyList()
         val updatedUsers = (currentUsers + newUsers).distinctBy { it.id }
         saveUserList(updatedUsers)
     }
 
+    /**
+     * Retrieves the list of users from DataStore
+     * Features:
+     * - Handles IO exceptions
+     * - Implements cache expiration (30 minutes)
+     * - Deserializes JSON to user list
+     *
+     * @return Flow containing list of users or null if cache expired
+     */
     fun getUserList(): Flow<List<UserInfoDTO>?> {
         return dataStore.data
             .catch { exception ->
@@ -66,34 +98,10 @@ class UserPreferencesManager @Inject constructor(
             }
     }
 
-    suspend fun saveCurrentUserDetail(user: UserInfoDTO) {
-        dataStore.edit { preferences ->
-            preferences[CURRENT_USER_ID] = user.id
-            // Update user in the list if exists
-            val currentList = getUserList().first() ?: emptyList()
-            val updatedList = currentList.map {
-                if (it.id == user.id) user else it
-            }
-            saveUserList(updatedList)
-        }
-    }
-
-    fun getCurrentUserDetail(): Flow<UserInfoDTO?> {
-        return dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                val userId = preferences[CURRENT_USER_ID] ?: return@map null
-                val userList = getUserList().first() ?: return@map null
-                userList.find { it.id == userId }
-            }
-    }
-
+    /**
+     * Clears all data from DataStore
+     * Use this method to reset all stored preferences
+     */
     suspend fun clearAll() {
         dataStore.edit { preferences ->
             preferences.clear()

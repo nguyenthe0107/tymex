@@ -22,6 +22,13 @@ object NetworkModule {
         return "https://api.github.com/"
     }
 
+    /**
+     * Provides a configured Retrofit instance for making API calls
+     *
+     * @param okHttpClient The configured OkHttpClient for network requests
+     * @param factory MoshiConverterFactory for JSON serialization/deserialization
+     * @return Configured Retrofit instance
+     */
     @Provides
     @AppBaseUrl
     fun provideRetrofit(
@@ -35,6 +42,15 @@ object NetworkModule {
             .build()
     }
 
+    /**
+     * Provides a Moshi instance for JSON parsing
+     *
+     * Features:
+     * - Singleton instance for app-wide use
+     * - Includes Kotlin support through KotlinJsonAdapterFactory
+     *
+     * @return Configured Moshi instance
+     */
     @Provides
     @Singleton
     fun provideMoshi(): Moshi {
@@ -43,6 +59,16 @@ object NetworkModule {
             .build()
     }
 
+    /**
+     * Provides a MoshiConverterFactory for Retrofit
+     *
+     * Features:
+     * - Singleton instance
+     * - Uses provided Moshi instance for consistent JSON handling
+     *
+     * @param moshi The configured Moshi instance
+     * @return MoshiConverterFactory for Retrofit
+     */
     @Provides
     @Singleton
     fun provideMoshiConverter(moshi: Moshi): MoshiConverterFactory {
