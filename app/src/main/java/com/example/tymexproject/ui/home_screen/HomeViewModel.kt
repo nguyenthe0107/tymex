@@ -47,6 +47,7 @@ class HomeViewModel @Inject constructor(
             _state.value = state.value.copy(
                 isLoading = false,
                 isLoadingMore = false,
+                canLoadMore = false,
             )
             return
         }
@@ -86,7 +87,8 @@ class HomeViewModel @Inject constructor(
                         is ResultApi.Error -> {
                             _state.value = state.value.copy(
                                 isLoading = false,
-                                isLoadingMore = false
+                                isLoadingMore = false,
+                                canLoadMore = false
                             )
                             _eventFlow.emit(
                                 UiHomeEvent.ShowError(

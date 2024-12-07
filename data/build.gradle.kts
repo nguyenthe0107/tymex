@@ -66,6 +66,7 @@ dependencies {
 
     implementation(project(":di"))
     implementation(project(":domain"))
+    implementation(project(":config"))
 
     //Dagger - Hilt
     implementation(libs.hilt.android.v2511)

@@ -57,18 +57,15 @@ object OkHttpModule {
      * - Configures timeout settings
      * - Singleton instance for app-wide use
      *
-     * @param authInterceptor Interceptor for handling authentication
      * @param loggingInterceptor Interceptor for logging
      * @return Configured OkHttpClient
      */
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .readTimeout(30, TimeUnit.SECONDS)
             .connectTimeout(30, TimeUnit.SECONDS)

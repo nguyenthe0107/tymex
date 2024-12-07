@@ -4,3 +4,5 @@ sealed interface ResultApi<out R> {
     data class Success<out T>(val data: T) : ResultApi<T>
     data class Error<out T>(val message: String,val code:Int = -1,val cause: Throwable? = null) : ResultApi<T>
 }
+
+data class ApiError(val error: String, val message: String)

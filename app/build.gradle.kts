@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":di"))
     implementation(project(":designsystem"))
     implementation(project(":data"))
+    implementation(project(":config"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

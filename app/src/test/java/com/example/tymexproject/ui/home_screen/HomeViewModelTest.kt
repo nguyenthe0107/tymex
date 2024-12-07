@@ -2,11 +2,11 @@ package com.example.tymexproject.ui.home_screen
 
 import app.cash.turbine.test
 import com.example.common.di.module.DispatcherProvider
+import com.example.config.Constants.ERR_COMMON
 import com.example.domain.model.UserInfoResponse
 import com.example.domain.usecase.UserInfoUseCase
 import com.example.domain.utils.ResultApi
 import com.google.common.truth.Truth.assertThat
-import com.tymex.data.repositoryImpl.Constants
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -120,7 +120,7 @@ class HomeViewModelTest {
     @Test
     fun `getUserList should emit error event when API call fails`() = runTest {
         // Arrange
-        val errorMessage = Constants.ERR_COMMON
+        val errorMessage = ERR_COMMON
         coEvery { userInfoUseCase.fetchUserList(perPage = PER_PAGE, since = 1) } returns flowOf(ResultApi.Error(errorMessage))
 
         // Act & Assert

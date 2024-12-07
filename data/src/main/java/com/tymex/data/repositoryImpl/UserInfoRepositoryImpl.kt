@@ -1,12 +1,15 @@
 package com.tymex.data.repositoryImpl
+
+import com.example.config.Constants.EMPTY_DATA
+import com.example.config.Constants.ERR_COMMON
 import com.example.domain.model.UserInfoResponse
 import com.example.domain.repository.UserInfoRepository
 import com.example.domain.utils.ResultApi
 import com.tymex.data.api_service.ApiService
 import com.tymex.data.model.UserInfoDTO
 import com.tymex.data.model.toUserInfo
-import com.tymex.data.repositoryImpl.Constants.EMPTY_DATA
-import com.tymex.data.repositoryImpl.Constants.ERR_COMMON
+import com.tymex.data.repositoryImpl.HelperApi.emitCommonErr
+import com.tymex.data.repositoryImpl.HelperApi.handleError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -49,8 +52,8 @@ class UserInfoRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.fetchUserList(perPage, since)
                 if (response.isSuccessful) {
-                    val users : List<UserInfoDTO> = response.body() ?: emptyList()
-                    if(users.isEmpty()){
+                    val users: List<UserInfoDTO> = response.body() ?: emptyList()
+                    if (users.isEmpty()) {
                         emit(ResultApi.Error(EMPTY_DATA, response.code()))
                         return@flow
                     }
@@ -58,10 +61,8 @@ class UserInfoRepositoryImpl @Inject constructor(
                     emit(ResultApi.Success(users.map { it.toUserInfo() }))
                 } else {
                     // handle error
-                    emit(ResultApi.Error(
-                        message = "$ERR_COMMON: ${response.message()}",
-                        code = response.code()
-                    ))
+                    handleError(response)
+                    return@flow
                 }
             } catch (e: Exception) {
                 // handle from cached
@@ -71,6 +72,7 @@ class UserInfoRepositoryImpl @Inject constructor(
                 } else {
                     // emit error from exception
                     emit(ResultApi.Error(ERR_COMMON, code = -1, cause = e))
+                    return@flow
                 }
             }
         }
@@ -101,31 +103,18 @@ class UserInfoRepositoryImpl @Inject constructor(
                         emit(ResultApi.Error(EMPTY_DATA, response.code()))
                     }
                 } else {
-                    emit(ResultApi.Error(
-                        message = "$ERR_COMMON: ${response.message()}",
-                        code = response.code()
-                    ))
+                    handleError(response)
+                    return@flow
                 }
             } catch (e: Exception) {
                 val cachedUsers = userPreferencesManager.getUserList().first()
-                if(cachedUsers.isNullOrEmpty()){
-                    emit(
-                        ResultApi.Error(
-                            "$ERR_COMMON: ${e.message}",
-                            code = -1,
-                            cause = e
-                        )
-                    )
-                }else{
+                if (cachedUsers.isNullOrEmpty()) {
+                    emitCommonErr(e)
+                    return@flow
+                } else {
                     val userDetail = cachedUsers.find { it.userName == userName }
-                    if(userDetail == null){
-                        emit(
-                            ResultApi.Error(
-                                "$ERR_COMMON: ${e.message}",
-                                code = -1,
-                                cause = e
-                            )
-                        )
+                    if (userDetail == null) {
+                        emitCommonErr(e)
                         return@flow
                     }
                     emit(ResultApi.Success(userDetail.toUserInfo()))

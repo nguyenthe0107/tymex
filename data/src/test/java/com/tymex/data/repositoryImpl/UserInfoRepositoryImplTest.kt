@@ -1,5 +1,7 @@
 package com.tymex.data.repositoryImpl
 import app.cash.turbine.test
+import com.example.config.Constants
+import com.example.config.Constants.EMPTY_DATA
 import com.example.domain.utils.ResultApi
 import com.tymex.data.api_service.ApiService
 import com.tymex.data.model.UserInfoDTO
@@ -14,7 +16,6 @@ import java.io.IOException
 import org.junit.Before
 import org.junit.Test
 import com.google.common.truth.Truth.assertThat
-import com.tymex.data.repositoryImpl.Constants.EMPTY_DATA
 import io.mockk.MockKAnnotations
 import io.mockk.MockKException
 import io.mockk.mockk
