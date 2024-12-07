@@ -49,13 +49,10 @@ fun StatItem(
     label: String,
     icon: ImageVector
 ) {
+    val countText = if(count.isNotEmpty()) count.plus("+") else "0"
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = CircleShape
-            )
             .padding(16.dp)
     ) {
         Box(
@@ -75,7 +72,7 @@ fun StatItem(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = count,
+            text = countText,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Medium
         )

@@ -1,8 +1,10 @@
 package com.example.tymexproject.ui.user_detail_screen
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +21,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.designsystem.component.CustomErrorDialog
 import com.example.designsystem.component.LoadingComponent
 import com.example.designsystem.component.ScaffoldTopAppbar
 import com.example.domain.model.UserInfoResponse
@@ -49,7 +53,8 @@ fun UserDetailScreen(
     navController: NavController,
     userDetailViewModel: UserDetailViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+    val showErrorDialog = remember { mutableStateOf(false) }
+    val errorMessage = remember { mutableStateOf("") }
     // Fetch user details when screen is launched
     LaunchedEffect(Unit) {
         userDetailViewModel.getUserDetailByUserName(userName)
@@ -59,7 +64,8 @@ fun UserDetailScreen(
         userDetailViewModel.eventFlow.collect { event ->
             when (event) {
                 is UiUserDetailEvent.ShowError -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    showErrorDialog.value = true
+                    errorMessage.value = event.message
                 }
             }
         }
@@ -80,6 +86,7 @@ fun UserDetailScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 // Reuse UserCard component
+                Spacer(modifier = Modifier.height(8.dp))
                 userDetailInfo?.let { UserInfoCard(user = it) {} }
                 Spacer(modifier = Modifier.height(24.dp))
                 // Stats section
@@ -88,12 +95,12 @@ fun UserDetailScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     StatItem(
-                        count = "${userDetailInfo?.followers}+",
+                        count = "${userDetailInfo?.followers ?: ""}",
                         label = stringResource(id = R.string.tvFollower),
                         icon = Icons.Default.Person
                     )
                     StatItem(
-                        count = "${userDetailInfo?.following}+",
+                        count = "${userDetailInfo?.following ?: ""}",
                         label = stringResource(id = R.string.tvFollowing),
                         icon = Icons.Default.Star
                     )
@@ -111,10 +118,22 @@ fun UserDetailScreen(
                     color = Color.Black
                 )
             }
-            AnimatedVisibility(visible = shouldShowLoading) {
+            AnimatedVisibility(
+                visible = shouldShowLoading,
+                enter = fadeIn(animationSpec = tween(durationMillis = 500)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 300))
+            ) {
                 LoadingComponent()
             }
         }
+    }
+
+    // show dialog error
+    if (showErrorDialog.value) {
+        CustomErrorDialog(
+            message = errorMessage.value,
+            onDismiss = { showErrorDialog.value = false }
+        )
     }
 }
 

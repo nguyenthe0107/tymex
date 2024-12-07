@@ -43,7 +43,7 @@ class UserPreferencesManagerTest {
         // When
         userPreferencesManager.getUserList().collect { result ->
             // Then
-            assertNull(result)
+            assertTrue(result?.isEmpty() ?: false)
         }
     }
 

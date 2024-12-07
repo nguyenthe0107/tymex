@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.designsystem.component.CustomErrorDialog
+import com.example.designsystem.component.MySpacer
 import com.example.designsystem.component.ScaffoldTopAppbar
 import com.example.tymexproject.R
 import com.example.tymexproject.routes.Screens
@@ -66,6 +67,9 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                item {
+                    MySpacer(height = 8.dp)
+                }
                 items(state.userList, key = { userInfo ->
                     "${userInfo.id}_${userInfo.userName}_${state.userList.indexOf(userInfo)}_${System.nanoTime()}".hashCode()
                 }) { userInfo ->

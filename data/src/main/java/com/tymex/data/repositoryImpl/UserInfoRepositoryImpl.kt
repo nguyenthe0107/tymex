@@ -1,5 +1,6 @@
 package com.tymex.data.repositoryImpl
 
+import android.util.Log
 import com.example.config.Constants.EMPTY_DATA
 import com.example.config.Constants.ERR_COMMON
 import com.example.domain.model.UserInfoResponse
@@ -12,6 +13,7 @@ import com.tymex.data.repositoryImpl.HelperApi.emitCommonErr
 import com.tymex.data.repositoryImpl.HelperApi.handleError
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -66,8 +68,10 @@ class UserInfoRepositoryImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 // handle from cached
-                val cachedUsers = userPreferencesManager.getUserList().first()
-                if (!cachedUsers.isNullOrEmpty()) {
+                val cachedUsers = userPreferencesManager.getUserList()
+                    .firstOrNull()
+                    ?: emptyList()
+                if (cachedUsers.isNotEmpty()) {
                     emit(ResultApi.Success(cachedUsers.map { it.toUserInfo() }))
                 } else {
                     // emit error from exception

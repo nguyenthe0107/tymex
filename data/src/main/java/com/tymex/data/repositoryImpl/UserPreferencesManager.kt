@@ -88,7 +88,7 @@ class UserPreferencesManager @Inject constructor(
                 val currentTime = System.currentTimeMillis()
                 // Cache expires after 30 minutes
                 if (currentTime - lastCachedTime > 30 * 60 * 1000) {
-                    null
+                    emptyList()
                 } else {
                     preferences[USER_LIST]?.let { json ->
                         val type = object : TypeToken<List<UserInfoDTO>>() {}.type
