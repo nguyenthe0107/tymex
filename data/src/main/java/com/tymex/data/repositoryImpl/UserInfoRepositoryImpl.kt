@@ -1,6 +1,5 @@
 package com.tymex.data.repositoryImpl
 
-import android.util.Log
 import com.example.config.Constants.EMPTY_DATA
 import com.example.config.Constants.ERR_COMMON
 import com.example.domain.model.UserInfoResponse
