@@ -2,7 +2,7 @@
 
 The project follows Clean Architecture principles combined with MVVM pattern, organized into multiple modules:
 ## Project Structure
-![Screenshot 2024-12-06 at 22.44.05.png](Screenshot%202024-12-06%20at%2022.44.05.png)![Scre
+![overview_project.png](overview_project.png)
 
 ## Overview Architect
 ```mermaid
