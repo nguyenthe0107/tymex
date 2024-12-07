@@ -21,9 +21,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.designsystem.component.MySpacer
+import com.example.designsystem.dimensions.Padding12
+import com.example.designsystem.dimensions.Padding16
+import com.example.designsystem.dimensions.Padding4
+import com.example.designsystem.dimensions.Padding8
+import com.example.designsystem.theme.GrayDEF8
 import com.example.domain.model.UserInfoResponse
 import java.util.Locale
 
@@ -36,32 +42,35 @@ fun UserInfoCard(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = Padding4),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 4.dp,
-            focusedElevation = 4.dp,
-            hoveredElevation = 4.dp,
+            defaultElevation = Padding4,
+            pressedElevation = Padding4,
+            focusedElevation = Padding4,
+            hoveredElevation = Padding4,
         ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(Padding12)
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(Padding16)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
             Card(
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(Padding12),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Gray.copy(alpha = 0.1f)
+                ),
             ) {
                 Box(
                     modifier = Modifier
                         .size(100.dp)
                         .background(
-                            color = Color(0xFFE8DEF8),
+                            color = GrayDEF8,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -78,20 +87,22 @@ fun UserInfoCard(
             }
             Column(
                 modifier = Modifier
-                    .padding(start = 16.dp)
+                    .padding(start = Padding16)
             ) {
                 Text(
                     text = user.userName.capitalize(Locale.ROOT),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Medium,
                 )
-                MySpacer(height = 8.dp)
+                MySpacer(height = Padding8)
                 HorizontalDivider(thickness = 0.5.dp)
-                MySpacer(height = 8.dp)
+                MySpacer(height = Padding8)
                 Text(
                     text = user.htmlUrl,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Blue
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    color = Color.Blue,
                 )
             }
         }

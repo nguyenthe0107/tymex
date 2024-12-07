@@ -115,7 +115,7 @@ fun UserDetailScreen(
                 Text(
                     text = userDetailInfo?.htmlUrl ?: "",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black
+                    color = Color.Gray
                 )
             }
             AnimatedVisibility(

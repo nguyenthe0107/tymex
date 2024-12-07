@@ -30,11 +30,10 @@ class OkHttpModuleTest {
     @Test
     fun `provideOkHttpClient returns client with correct configuration`() {
         // Given
-        val authInterceptor = module.provideAuthInterceptor()
         val loggingInterceptor = module.provideLoggingInterceptor()
 
         // When
-        val client = module.provideOkHttpClient(authInterceptor, loggingInterceptor)
+        val client = module.provideOkHttpClient(loggingInterceptor)
 
         // Then
         assertNotNull(client)
@@ -43,7 +42,6 @@ class OkHttpModuleTest {
         
         // Verify interceptors
         val interceptors = client.interceptors
-        assertTrue(interceptors.any { it is AuthInterceptor })
         assertTrue(interceptors.any { it is HttpLoggingInterceptor })
     }
 } 

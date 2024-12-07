@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.designsystem.dimensions.IconSizeMedium
+import com.example.designsystem.dimensions.Padding16
+import com.example.designsystem.dimensions.Padding4
 
 /**
  * A composable function that displays a statistic item with a count, label, and icon in a circular container.
@@ -53,7 +56,7 @@ fun StatItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(16.dp)
+            .padding(Padding16)
     ) {
         Box(
             modifier = Modifier
@@ -67,19 +70,21 @@ fun StatItem(
             Icon(
                 imageVector = icon,
                 contentDescription = icon.toString(),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(IconSizeMedium)
             )
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(Padding4))
         Text(
             text = countText,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium
         )
+        Spacer(modifier = Modifier.height(Padding4))
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = Color.Gray,
+            fontWeight = FontWeight.Medium
         )
     }
 }

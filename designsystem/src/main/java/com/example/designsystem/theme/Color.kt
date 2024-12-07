@@ -25,6 +25,7 @@ val BlueGray80 = Color(0xFFCCC2DC)
 val BlueGray90 = Color(0xFFE8DEF8)
 val BlueGray95 = Color(0xFFF6EDFF)
 val BlueGray99 = Color(0xFFFFFBFE)
+val GrayDEF8 = Color(0xFFE8DEF8)
 
 
 val Red10 = Color(0xFF410E0B)
