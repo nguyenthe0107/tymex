@@ -119,7 +119,7 @@ Flow of control apply with coroutine
 3. **Data Layer**
     - Repository Implementations
     - Remote Data Source (API)
-    - Local Data Source (Room Database)
+    - Local Data Source (DataStore)
     - Data Models (DTOs)
 
 ## Tech Stack
@@ -127,7 +127,7 @@ Flow of control apply with coroutine
 - **Kotlin Coroutines & Flow**: Asynchronous programming
 - **Hilt**: Dependency Injection
 - **Retrofit**: Network calls
-- **Room**: Local database
+- **DataStore**: Local database
 - **Unit Testing**: JUnit, Mockito
 - **Navigation Component**: Navigation
 
